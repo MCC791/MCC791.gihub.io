@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Datos</title>
+    <style>
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <h1>Registro de Datos</h1>
+    <form id="registroForm">
+        <label for="codigo">Código:</label>
+        <input type="text" id="codigo" name="codigo" required>
+        
+        <label for="area">Área:</label>
+        <select id="area" name="area" required>
+            <option value="Producción">Producción</option>
+            <option value="Utillaje">Utillaje</option>
+        </select>
+        
+        <label for="nombre">Nombre y Apellido:</label>
+        <select id="nombre" name="nombre" required></select>
+        
+        <label for="movimiento">Movimiento:</label>
+        <select id="movimiento" name="movimiento" required>
+            <option value="Entrada de Utillaje">Entrada de Utillaje</option>
+            <option value="Salida de Utillaje">Salida de Utillaje</option>
+        </select>
+        
+        <label for="pallets">Número de Pallets:</label>
+        <select id="pallets" name="pallets" required>
+            <!-- Opciones del Nº01 al Nº20 -->
+            <script>
+                for (let i = 1; i <= 20; i++) {
+                    let optionValue = `Nº${i.toString().padStart(2, '0')}`;
+                    document.write(`<option value="${optionValue}">${optionValue}</option>`);
+                }
+            </script>
+        </select>
+        
+        <label for="producto">Producto:</label>
+        <select id="producto" name="producto" required>
+            <option value="GRUESOS">GRUESOS</option>
+            <option value="GUARDAS">GUARDAS</option>
+            <option value="SEMIGUIAS">SEMIGUIAS</option>
+            <option value="CUCHILLAS">CUCHILLAS</option>
+            <option value="TUBOS">TUBOS</option>
+            <option value="EMBOCADURAS">EMBOCADURAS</option>
+        </select>
+        
+        <label for="tipo">Tipo:</label>
+        <input type="text" id="tipo" name="tipo" required>
+        
+        <label for="referencia">Referencia:</label>
+        <input type="text" id="referencia" name="referencia" required>
+        
+        <label for="cantidad">Cantidad:</label>
+        <input type="number" id="cantidad" name="cantidad" required>
+        
+        <label for="observaciones">Observaciones:</label>
+        <input type="text" id="observaciones" name="observaciones">
+        
+        <button type="submit">Agregar</button>
+    </form>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Código</th>
+                <th>Área</th>
+                <th>Nombre y Apellido</th>
+                <th>Movimiento</th>
+                <th>Número de Pallets</th>
+                <th>Producto</th>
+                <th>Tipo</th>
+                <th>Referencia</th>
+                <th>Cantidad</th>
+                <th>Observaciones</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="registroTableBody">
+            <!-- Los registros se agregarán aquí -->
+        </tbody>
+    </table>
+
+    <script>
+        const nombresProduccion = [
+            "José Antonio Perez Belmonte",
+            "Fco. Javier Checa Crespo (JE)",
+            "Miguel Ángel Cantero Ariza (JE)",
+            "J.Manuel Hernández Montero (JE)",
+            "Jordi Pino Prieto (JE-DSB)",
+            "Lauren Pino Prieto (JE-DSB)",
+            "Álex Fernández Almodovar (DSB)",
+            "Juan Beltran Plans (JE-DSB)",
+            "Ramón Flores Peirats (DSB)",
+            "Daniel Araujo Arroyo",
+            "David Fernández Almodóvar",
+            "Juan Leiva Tamargo",
+            "Juan Carlos Muñoz Flores",
+            "José Monroy Pérez de Vilar",
+            "M´hamet Ait Moujane",
+            "Adel Ziati Ziati",
+            "Davíd Marínez Bayerri",
+            "Bakary Baji"
+        ];
+
+        const nombresUtillaje = [
+            "José Lopez",
+            "Miguel Verdu",
+            "Marcos Caballero",
+            "Alejandro Sánchez Ruiz"
+        ];
+
+        document.getElementById('area').addEventListener('change', function() {
+            const area = this.value;
+            const nombreSelect = document.getElementById('nombre');
+            nombreSelect.innerHTML = ''; // Limpiar opciones actuales
+
+            const nombres = area === 'Producción' ? nombresProduccion : nombresUtillaje;
+            nombres.forEach(nombre => {
+                const option = document.createElement('option');
+                option.value = nombre;
+                option.textContent = nombre;
+                nombreSelect.appendChild(option);
+            });
+        });
+
+        document.getElementById('registroForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const fecha = new Date().toLocaleDateString('es-ES');
+            const codigo = document.getElementById('codigo').value;
+            const area = document.getElementById('area').value;
+            const nombre = document.getElementById('nombre').value;
+            const movimiento = document.getElementById('movimiento').value;
+            const pallets = document.getElementById('pallets').value;
+            const producto = document.getElementById('producto').value;
+            const tipo = document.getElementById('tipo').value;
+            const referencia = document.getElementById('referencia').value;
+            const cantidad = document.getElementById('cantidad').value;
+            const observaciones = document.getElementById('observaciones').value;
+
+            const tableBody = document.getElementById('registroTableBody');
+            const row = document.createElement('tr');
+
+            row.innerHTML = `
+                <td>${fecha}</td>
+                <td>${codigo}</td>
+                <td>${area}</td>
+                <td>${nombre}</td>
+                <td>${movimiento}</td>
+                <td>${pallets}</td>
+                <td>${producto}</td>
+                <td>${tipo}</td>
+                <td>${referencia}</td>
+                <td>${cantidad}</td>
+                <td>${observaciones}</td>
+                <td>
+                    <button type="button" onclick="editRow(this)">Editar</button>
+                    <button type="button" onclick="deleteRow(this)">Eliminar</button>
+                </td>
+            `;
+
+            tableBody.appendChild(row);
+            this.reset();
+        });
+
+        function editRow(button) {
+            const password = prompt('Ingrese la contraseña:');
+            if (password === 'MCC123') {
+                const row = button.parentElement.parentElement;
+                document.getElementById('codigo').value = row.cells[1].innerText;
+                document.getElementById('area').value = row.cells[2].innerText;
+                updateNombres(); // Actualiza los nombres según el área
+                document.getElementById('nombre').value = row.cells[3].innerText;
+                document.getElementById('movimiento').value = row.cells[4].innerText;
+                document.getElementById('pallets').value = row.cells[5].innerText;
+                document.getElementById('producto').value = row.cells[6].innerText;
+                document.getElementById('tipo').value = row.cells[7].innerText;
+                document.getElementById('referencia').value = row.cells[8].innerText;
+                document.getElementById('cantidad').value = row.cells[9].innerText;
+                document.getElementById('observaciones').value = row.cells[10].innerText;
+                row.remove();
+            } else {
+                alert('Contraseña incorrecta');
+            }
+        }
+
+        function deleteRow(button) {
+            const password = prompt('Ingrese la contraseña:');
+            if (password === 'MCC123') {
+                button.parentElement.parentElement.remove();
+            } else {
+                alert('Contraseña incorrecta');
+            }
+        }
+
+        function updateNombres() {
+            const area = document.getElementById('area').value;
+            const nombreSelect = document.getElementById('nombre');
+            nombreSelect.innerHTML = ''; // Limpiar opciones actuales
+
+            const nombres = area === 'Producción' ? nombresProduccion : nombresUtillaje;
+            nombres.forEach(nombre => {
+                const option = document.createElement('option');
+                option.value = nombre;
+                option.textContent = nombre;
+                nombreSelect.appendChild(option);
+            });
+        }
+
+        // Inicializa los nombres al cargar la página
+        window.onload = function() {
+            updateNombres();
+        };
+    </script>
+</body>
+</html>
